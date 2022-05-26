@@ -24,9 +24,13 @@ test('Test Role and Policies Created', () => {
             "PolicyDocument": {
                 "Statement": [
                     {
-                    "Action": "sts:AssumeRole",
-                    "Effect": "Allow",
-                    "Resource": Match.anyValue()
+                        "Action": "sts:AssumeRole",
+                        "Effect": "Allow",
+                        "Resource": {"Fn::Join":["",[
+                            "arn:aws:iam::",
+                            {"Ref": "AWS::AccountId"},
+                            ":role/cdk-*"
+                        ]]}
                     }
                 ],
                 "Version": "2012-10-17",

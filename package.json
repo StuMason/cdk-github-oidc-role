@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest"
+    "test": "jest",
+    "build-jsii": "jsii -vvv",
+    "package": "jsii-pacmak -vvv"
   },
   "devDependencies": {
     "@types/jest": "^27.5.0",
@@ -21,5 +23,18 @@
   "peerDependencies": {
     "aws-cdk-lib": "2.25.0",
     "constructs": "^10.0.0"
-  }
+  },
+  "dependencies": {
+    "jsii": "^1.59.0",
+    "jsii-pacmak": "^1.59.0"
+  },
+  "jsii": {
+    "outdir": "dist",
+    "targets": {
+        "python": {
+            "distName": "stumason.cdk_construct",
+            "module": "stumason.cdk_github_oidc"
+        }
+    }
+}
 }

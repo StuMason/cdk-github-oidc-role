@@ -50,5 +50,6 @@ export class GithubConstruct extends Construct {
       inlinePolicies: {"assumeCdk": assumeCdkPolicy}
     });
 
+    new CfnOutput(this, 'GithubDeploymentRoleArn', { value: role.roleArn });
   }
 }
