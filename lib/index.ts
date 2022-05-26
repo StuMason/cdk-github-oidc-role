@@ -3,7 +3,6 @@ import {
   Stack,
   CfnOutput,
   aws_iam as iam,
-  App
 } from 'aws-cdk-lib';
 
 export interface GithubConstructProps {
@@ -12,8 +11,6 @@ export interface GithubConstructProps {
 }
 
 export class GithubConstruct extends Construct {
-  readonly githubOrganisation: string;
-  readonly githubRepository: string;
 
   constructor(scope: Construct, id: string, props: GithubConstructProps) {
     super(scope, id);

@@ -1,4 +1,13 @@
 {
+  "author": {
+    "name": "stumason"
+  },
+  "repository": {
+    "url": "https://github.com/stumason/cdk-github-oidc-role",
+    "type": "git"
+  },
+  "license" : "ISC",
+  "description": "A CDK module for creating OIDC roles",
   "name": "github_construct",
   "version": "0.1.0",
   "main": "lib/index.js",
@@ -17,6 +26,8 @@
     "aws-cdk-lib": "2.25.0",
     "constructs": "^10.0.0",
     "jest": "^27.5.1",
+    "jsii": "^1.59.0",
+    "jsii-pacmak": "^1.59.0",
     "ts-jest": "^27.1.4",
     "typescript": "~3.9.7"
   },
@@ -24,17 +35,15 @@
     "aws-cdk-lib": "2.25.0",
     "constructs": "^10.0.0"
   },
-  "dependencies": {
-    "jsii": "^1.59.0",
-    "jsii-pacmak": "^1.59.0"
-  },
   "jsii": {
     "outdir": "dist",
+    "versionFormat": "full",
     "targets": {
-        "python": {
-            "distName": "stumason.cdk_construct",
-            "module": "stumason.cdk_github_oidc"
-        }
+      "python": {
+        "distName": "stumason.cdk_construct",
+        "module": "stumason.cdk_github_oidc"
+      }
     }
-}
+  },
+  "stability": "experimental"
 }
