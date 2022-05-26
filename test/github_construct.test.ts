@@ -1,18 +1,37 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as GithubConstruct from '../lib/index';
+import * as cdk from 'aws-cdk-lib';
+import { Template, Match } from 'aws-cdk-lib/assertions';
+import {
+    GithubConstruct
+} from '../lib/index';
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/index.ts
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//   const stack = new cdk.Stack(app, "TestStack");
-//   // WHEN
-//   new GithubConstruct.GithubConstruct(stack, 'MyTestConstruct');
-//   // THEN
-//   const template = Template.fromStack(stack);
+test('Test Role and Policies Created', () => {
+    const org = 'test-org';
+    const repo = 'test-repo';
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "TestStack");
+
+    new GithubConstruct(stack, 'MyTestConstruct', {githubOrganisation: org, githubRepository: repo});   
+
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::IAM::Role', { 
+        RoleName: `${org}-${repo}-deploy`
+    });
+
+    template.hasResourceProperties('AWS::IAM::Role', { 
+        Policies: [{
+            "PolicyDocument": {
+                "Statement": [
+                    {
+                    "Action": "sts:AssumeRole",
+                    "Effect": "Allow",
+                    "Resource": Match.anyValue()
+                    }
+                ],
+                "Version": "2012-10-17",
+            },
+            "PolicyName": "assumeCdk"
+        }]
+    });
 });

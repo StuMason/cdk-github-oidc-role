@@ -1,20 +1,54 @@
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import {
+  Stack,
+  CfnOutput,
+  aws_iam as iam,
+  App
+} from 'aws-cdk-lib';
 
 export interface GithubConstructProps {
-  // Define construct properties here
+  readonly githubOrganisation: string;
+  readonly githubRepository: string;
 }
 
 export class GithubConstruct extends Construct {
+  readonly githubOrganisation: string;
+  readonly githubRepository: string;
 
-  constructor(scope: Construct, id: string, props: GithubConstructProps = {}) {
+  constructor(scope: Construct, id: string, props: GithubConstructProps) {
     super(scope, id);
 
-    // Define construct contents here
+    const openIdConnectProviderArn = `arn:aws:iam::${Stack.of(this).account}:oidc-provider/token.actions.githubusercontent.com`;
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'GithubConstructQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    const provider = iam.OpenIdConnectProvider.fromOpenIdConnectProviderArn(this, 'GithubProvider', openIdConnectProviderArn);
+
+    const principle = new iam.OpenIdConnectPrincipal(provider).withConditions(
+      {"StringLike": {
+          "token.actions.githubusercontent.com": `repo:${props.githubOrganisation}:${props.githubRepository}`
+      }}
+    );
+
+    principle.addToPrincipalPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['sts:AssumeRoleWithWebIdentity'],
+      resources: ['*'],
+    }));
+
+    const assumeCdkPolicy = new iam.PolicyDocument({
+      statements: [ 
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ['sts:AssumeRole'],
+          resources: [`arn:aws:iam::${Stack.of(this).account}:role/cdk-*`],
+      })],
+    })
+
+    const role = new iam.Role(this, 'GithubDeploymentRole', {
+      assumedBy: principle,
+      roleName: `${props.githubOrganisation}-${props.githubRepository}-deploy`,
+      description: `Deploy from ${props.githubOrganisation}/${props.githubRepository}`,
+      inlinePolicies: {"assumeCdk": assumeCdkPolicy}
+    });
+
   }
 }
